@@ -7,9 +7,10 @@ const BentoTilt = ({ children, className = "" }) => {
   const itemRef = useRef(null);
 
   const handleMouseMove = (e) => {
-    if(!itemRef.current) return;
+    if (!itemRef.current) return;
 
-    const {left,top, width, height} = itemRef.current.getBoundingClientRect();
+    const { left, top, width, height } =
+      itemRef.current.getBoundingClientRect();
 
     const relativeX = (e.clientX - left) / width;
     const relativeY = (e.clientY - top) / height;
@@ -17,10 +18,9 @@ const BentoTilt = ({ children, className = "" }) => {
     const tiltX = (relativeY - 0.5) * 10;
     const tiltY = (relativeX - 0.5) * -10;
 
-    const newTransform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(.95, .95, .95)`
+    const newTransform = `perspective(700px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(.95, .95, .95)`;
 
-
-    setTransformStyle(newTransform)
+    setTransformStyle(newTransform);
   };
 
   const handleMouseLeave = () => {
@@ -33,14 +33,32 @@ const BentoTilt = ({ children, className = "" }) => {
       className={className}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{transform: transformStyle}}
+      style={{ transform: transformStyle }}
     >
       {children}
     </div>
   );
 };
 
-const BentoCard = ({ src, title, description }) => {
+const BentoCard = ({ src, title, description, isComingSoon }) => {
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [hoverOpacity, setHoverOpacity] = useState(0);
+  const hoverButtonRef = useRef(null);
+
+  const handleMouseMove = (e) =>{
+    if(!hoverButtonRef.current) return
+
+    const rect = hoverButtonRef.current.getBoundingClientRect();
+
+    setCursorPosition({
+      x:e.clientX-rect.left,
+      y: e.clientY-rect.top,
+    })
+  }
+
+  const handleMouseEnter = () => setHoverOpacity(1);
+  const handleMouseLeave = () => setHoverOpacity(0);
+
   return (
     <div className="relative size-full">
       <video
@@ -57,6 +75,27 @@ const BentoCard = ({ src, title, description }) => {
             <p className="mt-3 max-w-64 text-xs md:text-base">{description}</p>
           )}
         </div>
+
+        {isComingSoon && (
+          <div
+            ref={hoverButtonRef}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="border-hsla relative flex w-fit cursor-pointer items-center gap-1 overflow-hidden rounded-full bg-black px-5 py-2 text-xs uppercase text-white/20"
+          >
+
+          <div
+            className="pointer-event-none absolute -inset-px opacity-0 transition duration-300"
+            style={{
+              opacity:hoverOpacity,
+              background:`radial-gradient(100px circle at ${cursorPosition.x}px ${cursorPosition.y}px, #00000026)`,
+            }}
+          />
+          <TiLocationArrow className="relative z-20"/>
+          <p className="relative z-20">coming soon</p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -87,6 +126,7 @@ const Features = () => {
               </>
             }
             description="A cross-platform metagame app, turning your activities across web2 and web3 games into a rewarding adventure."
+            isComingSoon
           />
         </BentoTilt>
 
@@ -100,6 +140,7 @@ const Features = () => {
                 </>
               }
               description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+              isComingSoon
             />
           </BentoTilt>
 
@@ -112,6 +153,7 @@ const Features = () => {
                 </>
               }
               description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
+              isComingSoon
             />
           </BentoTilt>
 
@@ -124,6 +166,7 @@ const Features = () => {
                 </>
               }
               description="A cross-world AI Agent - elevating your gameplay to be more fun and productive."
+              isComingSoon
             />
           </BentoTilt>
 

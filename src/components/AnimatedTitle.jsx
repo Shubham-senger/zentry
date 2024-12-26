@@ -1,5 +1,9 @@
 import gsap from "gsap";
-import React, { useEffect, useRef } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef } from "react";
+
+
+gsap.registerPlugin(ScrollTrigger)
 
 const AnimatedTitle = ({ title, containerClass }) => {
 
@@ -22,7 +26,7 @@ const AnimatedTitle = ({ title, containerClass }) => {
                 transform:'translate3d(0,0,0) rotateY(0deg) rotateX(0deg)',
                 ease:'power2.inOut',
                 stagger:0.02
-            })
+            },0)
         },containerRef)
 
         return () => ctx.revert();
